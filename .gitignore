@@ -5,5 +5,8 @@ __pycache__/
 *.db
 node_modules/
 dist/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 .env
 tmp/
