@@ -548,9 +548,9 @@ function AlexFigure({ name, light, tiny = false }: { name: string; light: number
           <path d="M52 56 C50 48 54 44 60 44 C58 50 62 52 64 54 Z" fill="#2c221e" />
           <path d="M104 56 C106 48 102 44 96 44 C98 50 94 52 92 54 Z" fill="#2c221e" />
 
-          {/* Closed gentle smiling eyes */}
-          <path d="M64 64 C67 60 72 60 75 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          <path d="M81 64 C84 60 89 60 92 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+          {/* Relaxed Closed Smiling Eyes */}
+          <path d="M63 62 C66 58 71 58 74 62" stroke="#4a3728" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+          <path d="M82 62 C85 58 90 58 93 62" stroke="#4a3728" strokeWidth="2.8" strokeLinecap="round" fill="none" />
 
           {/* Peaceful Gentle Smile */}
           <path d="M73 71 C76 75 80 75 83 71" stroke="#8c583e" strokeWidth="2.2" strokeLinecap="round" fill="none" />
