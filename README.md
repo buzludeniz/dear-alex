@@ -120,6 +120,9 @@ This is not therapy or a substitute for professional care. A conservative safety
 
 ## Testing
 
+- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `pytest` tests and frontend `npm run build` on every push and pull request.
+- **In-App Diagnostics & Crisis Demo**: In the frontend UI, click **Diagnostics & Tests** or **Demo Crisis Hotline Screen** to test API health, application flow, and safety gates live.
+- **Backend Test Suite**:
 ```bash
 cd backend
 .venv/bin/pytest -v
