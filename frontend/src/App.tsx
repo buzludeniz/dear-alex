@@ -447,95 +447,142 @@ function AlexFigure({ name, light, tiny = false }: { name: string; light: number
 
   return (
     <div className="alex-character" style={{ "--light": light } as React.CSSProperties}>
-      <svg viewBox="0 0 160 190" className="alex-svg" aria-label={`Cozy illustration of ${name}`}>
+      <svg viewBox="0 0 160 190" className="alex-svg" aria-label={`High fidelity illustration of ${name}`}>
         <defs>
+          {/* Ambient Lantern Glow Radial Gradient */}
           <radialGradient id="lanternAura" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#ffe699" stopOpacity="0.85" />
-            <stop offset="50%" stopColor="#f39c12" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#f39c12" stopOpacity="0" />
+            <stop offset="0%" stopColor="#fffae6" stopOpacity="0.95" />
+            <stop offset="35%" stopColor="#f39c12" stopOpacity="0.55" />
+            <stop offset="70%" stopColor="#e67e22" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#d35400" stopOpacity="0" />
           </radialGradient>
+
+          {/* Directional Warm Light Gradient cast across Alex's body */}
+          <linearGradient id="directionalLight" x1="100%" y1="70%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#ffe899" stopOpacity={0.25 + light * 0.45} />
+            <stop offset="50%" stopColor="#f39c12" stopOpacity={0.12 + light * 0.2} />
+            <stop offset="100%" stopColor="#2c3e50" stopOpacity="0" />
+          </linearGradient>
+
+          {/* Sweater Cable Knit Texture Gradient */}
+          <linearGradient id="sweaterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3d6c73" />
+            <stop offset="100%" stopColor="#244247" />
+          </linearGradient>
         </defs>
 
-        {/* Ambient warm lantern glow that expands and brightens with advice */}
+        {/* Dynamic Lantern Warmth Aura */}
         <circle
           cx="130"
           cy="140"
-          r={26 + light * 34}
+          r={28 + light * 38}
           fill="url(#lanternAura)"
           className="lantern-aura"
         />
 
-        {/* Ground shadow beneath Alex */}
-        <ellipse cx="78" cy="174" rx="44" ry="10" fill="#08141d" opacity="0.45" />
+        {/* Soft Ground Shadow on Hillside */}
+        <ellipse cx="78" cy="176" rx="48" ry="11" fill="#08141d" opacity="0.55" />
 
-        {/* Sitting legs in denim trousers */}
-        <path d="M48 146 C44 162 52 172 68 172 C82 172 84 156 80 146 Z" fill="#1b2f3d" />
-        <path d="M78 146 C84 156 90 172 108 172 C120 172 120 160 114 146 Z" fill="#152631" />
-        <ellipse cx="64" cy="172" rx="9" ry="4.5" fill="#4a3728" />
-        <ellipse cx="112" cy="172" rx="9" ry="4.5" fill="#4a3728" />
+        {/* Leather Camping Boots with Soles & Laces */}
+        <g className="alex-boots">
+          {/* Left Boot */}
+          <ellipse cx="62" cy="174" rx="11" ry="5.5" fill="#2d1d13" />
+          <path d="M52 165 C52 165 54 174 68 174 C73 174 74 168 70 165 Z" fill="#523928" />
+          <line x1="58" y1="168" x2="64" y2="168" stroke="#8c6243" strokeWidth="1.2" />
+          <line x1="59" y1="171" x2="65" y2="171" stroke="#8c6243" strokeWidth="1.2" />
 
-        {/* Cozy textured wool sweater */}
-        <g className="alex-body">
+          {/* Right Boot near Lantern */}
+          <ellipse cx="114" cy="174" rx="11" ry="5.5" fill="#2d1d13" />
+          <path d="M104 165 C104 165 106 174 120 174 C125 174 126 168 122 165 Z" fill="#523928" />
+          <line x1="110" y1="168" x2="116" y2="168" stroke="#8c6243" strokeWidth="1.2" />
+          <line x1="111" y1="171" x2="117" y2="171" stroke="#8c6243" strokeWidth="1.2" />
+        </g>
+
+        {/* Trousers with subtle knee highlights */}
+        <g className="alex-trousers">
+          <path d="M46 144 C42 160 50 172 68 172 C80 172 82 156 78 144 Z" fill="#1b2f3d" />
+          <path d="M78 144 C84 154 88 172 108 172 C120 172 120 158 114 144 Z" fill="#152631" />
+          <ellipse cx="60" cy="156" rx="5" ry="8" fill="#253e50" opacity="0.6" />
+          <ellipse cx="98" cy="156" rx="5" ry="8" fill="#1f3444" opacity="0.6" />
+        </g>
+
+        {/* High-Fidelity Cable-Knit Wool Sweater */}
+        <g className="alex-sweater">
           <path
-            d="M46 96 C42 124 48 152 78 152 C108 152 114 124 110 96 C102 86 54 86 46 96 Z"
-            fill="#325a60"
+            d="M44 94 C40 122 46 150 78 150 C110 150 116 122 112 94 C104 84 52 84 44 94 Z"
+            fill="url(#sweaterGradient)"
           />
-          {/* Subtle knitted stitches */}
-          <path d="M78 102 L78 146" stroke="#25464b" strokeWidth="2" strokeDasharray="3,3" />
-          <path d="M66 108 L66 142" stroke="#25464b" strokeWidth="1.5" strokeDasharray="3,3" />
-          <path d="M90 108 L90 142" stroke="#25464b" strokeWidth="1.5" strokeDasharray="3,3" />
 
-          {/* Left arm resting gently on lap */}
-          <path d="M48 102 C38 116 42 136 56 140" stroke="#325a60" strokeWidth="13" strokeLinecap="round" fill="none" />
-          <circle cx="58" cy="140" r="7" fill="#e08e45" />
+          {/* Textured Diagonal Knit Stitches */}
+          <path d="M78 98 L78 146" stroke="#1d383d" strokeWidth="2.5" strokeDasharray="4,3" />
+          <path d="M66 104 L66 142" stroke="#1d383d" strokeWidth="2" strokeDasharray="3,3" />
+          <path d="M90 104 L90 142" stroke="#1d383d" strokeWidth="2" strokeDasharray="3,3" />
 
-          {/* Right arm resting near lantern */}
-          <path d="M106 102 C116 114 122 126 124 138" stroke="#325a60" strokeWidth="13" strokeLinecap="round" fill="none" />
-          <circle cx="124" cy="139" r="7" fill="#e08e45" />
+          {/* Left Arm Resting Gently */}
+          <path d="M46 100 C36 114 40 134 54 138" stroke="url(#sweaterGradient)" strokeWidth="14" strokeLinecap="round" fill="none" />
+          <circle cx="56" cy="138" r="7" fill="#e08e45" />
+
+          {/* Right Arm Reaching Towards Lantern Warmth */}
+          <path d="M108 100 C118 112 124 124 126 136" stroke="url(#sweaterGradient)" strokeWidth="14" strokeLinecap="round" fill="none" />
+          <circle cx="126" cy="137" r="7" fill="#e08e45" />
         </g>
 
-        {/* Cozy wrap-around mustard scarf */}
+        {/* Cozy Layered Mustard Scarf with Fringe */}
         <g className="alex-scarf">
-          <path d="M44 86 C44 86 78 98 112 86 C116 94 110 106 102 106 C78 109 52 107 44 86 Z" fill="#e08e45" />
-          <path d="M58 98 C60 116 64 132 66 136 C71 137 75 135 74 130 C72 118 70 102 70 98 Z" fill="#cf7a30" />
-          <line x1="66" y1="136" x2="66" y2="141" stroke="#a3581c" strokeWidth="2" />
-          <line x1="70" y1="136" x2="70" y2="141" stroke="#a3581c" strokeWidth="2" />
-          <line x1="73" y1="134" x2="73" y2="139" stroke="#a3581c" strokeWidth="2" />
+          <path d="M42 84 C42 84 78 98 114 84 C118 92 112 106 102 106 C78 109 50 107 42 84 Z" fill="#e08e45" />
+          <path d="M56 96 C58 116 62 132 64 138 C69 139 73 137 72 132 C70 118 68 100 68 96 Z" fill="#cf7a30" />
+
+          {/* Scarf Fringe Threads */}
+          <line x1="64" y1="138" x2="64" y2="144" stroke="#a3581c" strokeWidth="1.8" />
+          <line x1="67" y1="138" x2="67" y2="144" stroke="#a3581c" strokeWidth="1.8" />
+          <line x1="70" y1="138" x2="70" y2="144" stroke="#a3581c" strokeWidth="1.8" />
+          <line x1="73" y1="136" x2="73" y2="142" stroke="#a3581c" strokeWidth="1.8" />
         </g>
 
-        {/* Head & Peaceful Smiling Face */}
+        {/* Character Head & Facial Expression */}
         <g className="alex-head">
-          <rect x="71" y="78" width="14" height="10" fill="#e5b88a" />
-          <circle cx="78" cy="62" r="26" fill="#f3c99f" />
+          <rect x="71" y="76" width="14" height="12" fill="#e5b88a" />
+          <circle cx="78" cy="60" r="26" fill="#f3c99f" />
 
-          {/* Soft hair peeking from under beanie */}
-          <path d="M54 58 C52 50 56 46 62 46 C60 52 64 54 66 56 Z" fill="#2c221e" />
-          <path d="M102 58 C104 50 100 46 94 46 C96 52 92 54 90 56 Z" fill="#2c221e" />
+          {/* Soft Hair Strands framing face */}
+          <path d="M52 56 C50 48 54 44 60 44 C58 50 62 52 64 54 Z" fill="#2c221e" />
+          <path d="M104 56 C106 48 102 44 96 44 C98 50 94 52 92 54 Z" fill="#2c221e" />
 
           {/* Closed gentle smiling eyes */}
           <path d="M64 64 C67 60 72 60 75 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
           <path d="M81 64 C84 60 89 60 92 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
 
-          {/* Sweet quiet smile */}
-          <path d="M74 73 C76 76 80 76 82 73" stroke="#8c583e" strokeWidth="2" strokeLinecap="round" fill="none" />
+          {/* Peaceful Gentle Smile */}
+          <path d="M73 71 C76 75 80 75 83 71" stroke="#8c583e" strokeWidth="2.2" strokeLinecap="round" fill="none" />
 
-          {/* Rosy blushing cheeks */}
-          <circle cx="62" cy="68" r="5" fill="#e88080" opacity="0.45" />
-          <circle cx="94" cy="68" r="5" fill="#e88080" opacity="0.45" />
+          {/* Rosy Blushing Cheeks */}
+          <circle cx="61" cy="66" r="5.5" fill="#e88080" opacity="0.5" />
+          <circle cx="95" cy="66" r="5.5" fill="#e88080" opacity="0.5" />
 
-          {/* Knitted Beanie with Pom-pom */}
+          {/* Ribbed Knitted Beanie with Highlighted Pom-pom */}
           <g className="alex-beanie">
-            <path d="M52 54 C50 26 106 26 104 54 Z" fill="#254a50" />
-            <rect x="49" y="47" width="58" height="11" rx="5" fill="#e08e45" />
-            <line x1="58" y1="48" x2="58" y2="57" stroke="#c4732b" strokeWidth="1.5" />
-            <line x1="68" y1="48" x2="68" y2="57" stroke="#c4732b" strokeWidth="1.5" />
-            <line x1="78" y1="48" x2="78" y2="57" stroke="#c4732b" strokeWidth="1.5" />
-            <line x1="88" y1="48" x2="88" y2="57" stroke="#c4732b" strokeWidth="1.5" />
-            <line x1="98" y1="48" x2="98" y2="57" stroke="#c4732b" strokeWidth="1.5" />
-            <circle cx="78" cy="22" r="8" fill="#e08e45" />
-            <circle cx="75" cy="20" r="3" fill="#f5b878" opacity="0.6" />
+            <path d="M50 52 C48 24 108 24 106 52 Z" fill="#214248" />
+            <rect x="47" y="45" width="62" height="12" rx="5" fill="#e08e45" />
+
+            {/* Beanie Ribbed Ribs */}
+            <line x1="56" y1="46" x2="56" y2="56" stroke="#b8631f" strokeWidth="1.6" />
+            <line x1="66" y1="46" x2="66" y2="56" stroke="#b8631f" strokeWidth="1.6" />
+            <line x1="76" y1="46" x2="76" y2="56" stroke="#b8631f" strokeWidth="1.6" />
+            <line x1="86" y1="46" x2="86" y2="56" stroke="#b8631f" strokeWidth="1.6" />
+            <line x1="96" y1="46" x2="96" y2="56" stroke="#b8631f" strokeWidth="1.6" />
+
+            {/* Fluffy Pom-pom */}
+            <circle cx="78" cy="20" r="9" fill="#e08e45" />
+            <circle cx="75" cy="18" r="3.5" fill="#f5b878" opacity="0.75" />
           </g>
         </g>
+
+        {/* Directional Lantern Light Highlight Overlay across Alex's Body */}
+        <path
+          d="M44 94 C40 122 46 150 78 150 C110 150 116 122 112 94 Z"
+          fill="url(#directionalLight)"
+          style={{ mixBlendMode: "screen" }}
+        />
 
         {/* Vintage Camping Lantern sitting on the knoll */}
         <g className="alex-lantern">
@@ -547,23 +594,26 @@ function AlexFigure({ name, light, tiny = false }: { name: string; light: number
             height="20"
             rx="3"
             fill="#fffae6"
-            fillOpacity={0.45 + light * 0.45}
+            fillOpacity={0.5 + light * 0.45}
             stroke="#45505b"
             strokeWidth="1.5"
           />
-          {/* Flame inside lantern */}
+
+          {/* Candle Flame inside Lantern Glass */}
           <ellipse
             cx="130"
             cy="144"
-            rx={2.2 + light * 1.5}
-            ry={4 + light * 2}
+            rx={2.4 + light * 1.6}
+            ry={4.5 + light * 2}
             fill="#ffaa00"
             className="lantern-flame"
           />
-          <circle cx="130" cy="145" r="1.6" fill="#fff" />
+          <circle cx="130" cy="145" r="1.8" fill="#fff" />
+
+          {/* Metallic Lantern Cap & Handle */}
           <path d="M121 134 L139 134 L134 128 L126 128 Z" fill="#252e37" />
           <circle cx="130" cy="126" r="2.5" fill="#d97736" />
-          <path d="M125 128 C125 122 135 122 135 128" stroke="#8a9ba8" strokeWidth="1.2" fill="none" />
+          <path d="M125 128 C125 122 135 122 135 128" stroke="#8a9ba8" strokeWidth="1.4" fill="none" />
         </g>
       </svg>
       <span className="character-name-badge">{name}</span>
