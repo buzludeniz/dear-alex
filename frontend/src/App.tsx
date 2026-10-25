@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  Activity,
   ArrowRight,
   Download,
   Heart,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import { API, deviceId, request } from "./lib/api";
 import { useAmbientMusic } from "./lib/useAmbient";
+import { DiagnosticsModal } from "./components/DiagnosticsModal";
 
 type Style = "Compassion" | "Perspective" | "Action";
 type Advice = { scene: string; text: string; style: Style };
@@ -63,6 +65,7 @@ export default function App() {
   const [crisis, setCrisis] = useState("");
   const [loading, setLoading] = useState(false);
   const [demoRunning, setDemoRunning] = useState(false);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
 
   const sessionRef = useRef("");
   const cardsRef = useRef<Card[]>([]);
@@ -207,6 +210,9 @@ export default function App() {
 
   const controls = (
     <div className="utility">
+      <button className="icon-button" onClick={() => setShowDiagnostics(true)} title="Diagnostics & Live Testing">
+        <Activity size={16} />
+      </button>
       <button className="icon-button" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
         {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
       </button>
@@ -232,17 +238,19 @@ export default function App() {
           <button className="vault-link" onClick={() => void openVault()}><LockKeyhole size={14} /> Letter vault</button>
         </div>
       </header>
-      {screen === "checkin" && <Checkin mood={mood} setMood={setMood} next={() => setScreen("intake")} onDemo={() => void runDemo()} demoRunning={demoRunning} />}
+      {screen === "checkin" && <Checkin mood={mood} setMood={setMood} next={() => setScreen("intake")} onDemo={() => void runDemo()} demoRunning={demoRunning} onDiagnostics={() => setShowDiagnostics(true)} />}
       {screen === "intake" && <Intake story={story} voice={voice} category={category} name={name} setStory={setStory} setVoice={setVoice} setCategory={setCategory} setName={setName} begin={() => void begin()} reset={reset} loading={loading} />}
       {screen === "scene" && <Scene scene={SCENES[step]} name={name || "Alex"} story={story} voice={voice} cards={cards.filter(c => c.scene === SCENES[step].key)} custom={custom} setCustom={setCustom} submit={submitAdvice} reaction={reaction} light={light} step={step} loading={loading} onExit={reset} />}
       {screen === "reveal" && <Reveal story={story} name={name || "Alex"} tokens={revealTokens} done={() => setScreen("letter")} />}
       {screen === "letter" && letter && <LetterView letter={letter} onVault={() => void openVault()} onReset={reset} />}
       {screen === "vault" && <Vault letters={vault} collection={collection} open={item => { setLetter(item); setScreen("letter"); }} past={() => void pastLetter()} erase={() => void erase()} />}
+
+      {showDiagnostics && <DiagnosticsModal onClose={() => setShowDiagnostics(false)} />}
     </main>
   );
 }
 
-function Checkin({ mood, setMood, next, onDemo, demoRunning }: { mood: number | null; setMood: (n: number) => void; next: () => void; onDemo: () => void; demoRunning: boolean }) {
+function Checkin({ mood, setMood, next, onDemo, demoRunning, onDiagnostics }: { mood: number | null; setMood: (n: number) => void; next: () => void; onDemo: () => void; demoRunning: boolean; onDiagnostics: () => void }) {
   return (
     <section className="hero">
       <div className="hero-copy">
@@ -268,6 +276,9 @@ function Checkin({ mood, setMood, next, onDemo, demoRunning }: { mood: number | 
           <button className="text" onClick={next}>Skip check-in</button>
           <button className="demo-btn" onClick={onDemo} disabled={demoRunning} aria-label="Run automated demo">
             <Zap size={13} />{demoRunning ? "Demo running…" : "Watch auto-demo"}
+          </button>
+          <button className="text-small-diag" onClick={onDiagnostics}>
+            <Activity size={13} /> Diagnostics & Tests
           </button>
         </div>
       </div>
@@ -501,7 +512,7 @@ function AlexFigure({ name, light, tiny = false }: { name: string; light: number
           <path d="M54 58 C52 50 56 46 62 46 C60 52 64 54 66 56 Z" fill="#2c221e" />
           <path d="M102 58 C104 50 100 46 94 46 C96 52 92 54 90 56 Z" fill="#2c221e" />
 
-          {/* Closed gentle smiling eyes ◠ ◠ */}
+          {/* Closed gentle smiling eyes */}
           <path d="M64 64 C67 60 72 60 75 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
           <path d="M81 64 C84 60 89 60 92 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
 
@@ -581,7 +592,7 @@ function HeroArtwork() {
 function World({ name, reaction, light }: { name: string; reaction: string; light: number }) {
   return (
     <div className="world" style={{ "--light": light } as React.CSSProperties}>
-      <div className="world-stars">✦　·　✦　·　✦</div>
+      <div className="world-stars">✦　·　✦　·_✦</div>
       <div className="world-moon" />
       <div className="world-hill hill-back" />
       <div className="world-hill hill-front" />

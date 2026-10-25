@@ -6,7 +6,7 @@ Dear Alex applies psychological self-distancing to personal reflection: users co
 
 ## 1. Safety and Privacy First
 
-- **Pre-Persistence Triage**: All free-text inputs pass through our conservative safety gate before any database insertion. Clear crisis phrasing immediately stops the session and surfaces Canadian 9-8-8 Suicide Crisis Helpline and UVic Counselling Services details.
+- **Pre-Persistence Triage**: All free-text inputs pass through the conservative safety gate before any database insertion. Clear crisis phrasing immediately stops the session and surfaces Canadian 9-8-8 Suicide Crisis Helpline and UVic Counselling Services details.
 - **Zero Retention of Flagged Content**: Flagged text is discarded in-flight and is never written to SQLite, persistent storage, or telemetry logs.
 - **Anonymous & Local by Default**: No user accounts, passwords, or emails. A client-generated anonymous UUID in `localStorage` isolates data per device.
 - **Full Data Sovereignty**: The user can download all stored reflections as structured JSON (`/api/vault/export`) or permanently delete all device records in one click (`DELETE /api/vault`).
@@ -16,9 +16,9 @@ Dear Alex applies psychological self-distancing to personal reflection: users co
 
 ## 2. Deliberate Omissions (The "Anti-Features" List)
 
-Traditional gamification mechanics exploit cognitive biases and loss aversion to drive retention metrics. In a wellbeing context, these mechanics often exacerbate guilt and anxiety. We deliberately excluded:
+Traditional gamification mechanics exploit cognitive biases and loss aversion to drive retention metrics. In a wellbeing context, these mechanics often exacerbate guilt and anxiety. Deliberately excluded:
 
-| Excluded Mechanic | Why We Left It Out | What We Built Instead |
+| Excluded Mechanic | Why Left Out | What Was Built Instead |
 |---|---|---|
 | **Streaks & Daily Penalties** | Missing a day triggers shame, punishing students during busy or low-energy periods. | The Letter Vault: letters never expire, decay, or lose value. |
 | **XP Decay / Leaderboards** | Social comparison amplifies impostor syndrome and feeling "behind." | Private collection badges (Compassion, Perspective, Action) without ranks. |
