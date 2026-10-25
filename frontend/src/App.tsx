@@ -12,6 +12,7 @@ import {
   Sparkles,
   Sun,
   Trash2,
+  ShieldAlert,
   Volume2,
   Zap,
 } from "lucide-react";
@@ -226,6 +227,11 @@ export default function App() {
 
   if (screen === "crisis") return <main><Crisis message={crisis} reset={reset} /></main>;
 
+  function triggerCrisisDemo() {
+    setCrisis("If you or someone you know is in distress or crisis, support is available 24/7. Call or text 9-8-8 (Suicide Crisis Helpline) or contact UVic Student Wellness Centre.");
+    setScreen("crisis");
+  }
+
   return (
     <main>
       <header>
@@ -238,7 +244,7 @@ export default function App() {
           <button className="vault-link" onClick={() => void openVault()}><LockKeyhole size={14} /> Letter vault</button>
         </div>
       </header>
-      {screen === "checkin" && <Checkin mood={mood} setMood={setMood} next={() => setScreen("intake")} onDemo={() => void runDemo()} demoRunning={demoRunning} onDiagnostics={() => setShowDiagnostics(true)} />}
+      {screen === "checkin" && <Checkin mood={mood} setMood={setMood} next={() => setScreen("intake")} onDemo={() => void runDemo()} demoRunning={demoRunning} onDiagnostics={() => setShowDiagnostics(true)} onCrisisDemo={triggerCrisisDemo} />}
       {screen === "intake" && <Intake story={story} voice={voice} category={category} name={name} setStory={setStory} setVoice={setVoice} setCategory={setCategory} setName={setName} begin={() => void begin()} reset={reset} loading={loading} />}
       {screen === "scene" && <Scene scene={SCENES[step]} name={name || "Alex"} story={story} voice={voice} cards={cards.filter(c => c.scene === SCENES[step].key)} custom={custom} setCustom={setCustom} submit={submitAdvice} reaction={reaction} light={light} step={step} loading={loading} onExit={reset} />}
       {screen === "reveal" && <Reveal story={story} name={name || "Alex"} tokens={revealTokens} done={() => setScreen("letter")} />}
@@ -250,7 +256,7 @@ export default function App() {
   );
 }
 
-function Checkin({ mood, setMood, next, onDemo, demoRunning, onDiagnostics }: { mood: number | null; setMood: (n: number) => void; next: () => void; onDemo: () => void; demoRunning: boolean; onDiagnostics: () => void }) {
+function Checkin({ mood, setMood, next, onDemo, demoRunning, onDiagnostics, onCrisisDemo }: { mood: number | null; setMood: (n: number) => void; next: () => void; onDemo: () => void; demoRunning: boolean; onDiagnostics: () => void; onCrisisDemo: () => void }) {
   return (
     <section className="hero">
       <div className="hero-copy">
@@ -279,6 +285,9 @@ function Checkin({ mood, setMood, next, onDemo, demoRunning, onDiagnostics }: { 
           </button>
           <button className="text-small-diag" onClick={onDiagnostics}>
             <Activity size={13} /> Diagnostics & Tests
+          </button>
+          <button className="text-small-diag" onClick={onCrisisDemo} style={{ color: "var(--accent)", marginTop: "4px" }}>
+            <ShieldAlert size={13} /> Demo Crisis Hotline Screen
           </button>
         </div>
       </div>
@@ -631,7 +640,7 @@ function HeroArtwork() {
       <div className="hill hill-back" />
       <div className="hill hill-front" />
       <div className="window-light" />
-      <AlexFigure name="Alex" light={0} tiny={true} />
+      <AlexFigure name="Alex" light={0} />
       <div className="star star-one">✦</div>
       <div className="star star-two">✦</div>
       <p>A small place<br />to come back to.</p>
