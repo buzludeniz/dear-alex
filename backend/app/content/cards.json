@@ -1,0 +1,11 @@
+[
+  {"id":"moment-compassion","scene":"moment","style":"Compassion","text":"Take a breath. You deserve gentleness before you solve anything.","reaction":"Alex's shoulders soften a little."},
+  {"id":"moment-perspective","scene":"moment","style":"Perspective","text":"One hard moment is not the whole story of who you are.","reaction":"The sky opens around Alex."},
+  {"id":"moment-action","scene":"moment","style":"Action","text":"Do one small kind thing: water, food, or a five-minute reset.","reaction":"Alex finds a steady next step."},
+  {"id":"voice-compassion","scene":"voice","style":"Compassion","text":"You would never say that to someone you care about.","reaction":"The inner voice gets quieter."},
+  {"id":"voice-perspective","scene":"voice","style":"Perspective","text":"A thought can be loud without being true.","reaction":"Alex sees some space around the thought."},
+  {"id":"voice-action","scene":"voice","style":"Action","text":"Name the thought, then answer it with one fair fact.","reaction":"Alex writes down a kinder answer."},
+  {"id":"tomorrow-compassion","scene":"tomorrow","style":"Compassion","text":"Let tomorrow be small; resting counts too.","reaction":"Alex gives tomorrow room to be gentle."},
+  {"id":"tomorrow-perspective","scene":"tomorrow","style":"Perspective","text":"Progress is returning to yourself, not getting everything right.","reaction":"A path appears beyond the hill."},
+  {"id":"tomorrow-action","scene":"tomorrow","style":"Action","text":"Choose one tiny next action you can finish in ten minutes.","reaction":"Alex takes one clear step forward."}
+]
