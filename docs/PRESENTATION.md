@@ -9,9 +9,9 @@
 ### Slide 1 — The Hook (0:00 – 0:45)
 - **Visual**: Quote: *"Think of the last time a close friend was struggling. You knew exactly what to say. Now think about what you told yourself after your last setback."*
 - **Script**:
-  > "Good afternoon, judges. When a friend fails a midterm or freezes up in a presentation, we offer warmth, perspective, and a concrete next step. But when the same thing happens to us, the inner voice turns harsh, critical, and unforgiving.
+  > "Good afternoon, judges. When a friend fails a midterm or freezes up in a presentation, we offer warmth, perspective, and a concrete next step. But when the same thing happens to us, our inner voice turns harsh, critical, and unforgiving.
   >
-  > Today's mental health apps ask us to stare directly at personal feelings through mood trackers and journals. But staring at yourself when overwhelmed is where the inner critic is loudest.
+  > Today's mental health apps ask us to stare directly at our own feelings through mood trackers and journals. But staring at yourself when you're overwhelmed is where the inner critic is loudest.
   >
   > What if, instead of asking you to coach yourself, you coached a friend named Alex?"
 
@@ -50,12 +50,12 @@
      - Pick an **Action** card: *"Choose one tiny next action you can finish in ten minutes."*
   6. **THE REVEAL (The Killer Feature)**:
      - The screen pauses: *"That advice was for you."*
-     - The words animate token-by-token back from Alex's story into original sentences.
+     - The words animate token-by-token back from Alex's story into your own original sentences.
   7. **The Letter to You & The Vault**:
      - Review the synthesized letter sealed into the local private SQLite vault.
      - Open a past resurfaced letter via the weighted scorer.
 - **Script during demo**:
-  > "Notice what just happened. We didn't lecture the player on cognitive behavioral therapy. We simply let them generate compassionate wisdom under the shelter of helping someone else—and then gently handed their own words back to them."
+  > "Notice what just happened. We didn't lecture the player on cognitive behavioral therapy. We simply let them generate their own compassionate wisdom under the shelter of helping someone else—and then gently handed their own words back to them."
 
 ---
 
@@ -66,20 +66,20 @@
   - **Crisis Safety Layer**: Conservative pre-database triage routing explicit crisis phrases to Canadian 9-8-8 and UVic Counselling before persisting anything. 10 false-positive guards.
   - **Scored Resurfacing Algorithm**: Category bonus (+3), compassion weighting for low mood (+2), 7-day recency decay (-5), and weighted top-3 stochastic selection.
   - **Zero Third-Party APIs**: 100% private, local, and zero-cost runtime.
-  - **Comprehensive Testing**: 76 passing pytest unit, integration, and edge-case tests.
+  - **Comprehensive Testing**: 61 passing pytest unit and integration tests.
 
 ---
 
-### Slide 5 — Ethical Design: What Was Deliberately Excluded (7:15 – 8:15)
+### Slide 5 — Ethical Design: What We Deliberately Did Not Build (7:15 – 8:15)
 - **Visual**: The Anti-Features List:
-  - No streaks or streak freeze microtransactions
-  - No XP loss or guilt mechanics
-  - No push notifications or countdown timers
-  - No user accounts or third-party trackers
+  - ❌ No streaks or streak freeze microtransactions
+  - ❌ No XP loss or guilt mechanics
+  - ❌ No push notifications or countdown timers
+  - ❌ No user accounts or third-party trackers
 - **Script**:
-  > "A mental health tool must not weaponize loss aversion. If a student is having a hard week and misses three days, a broken streak induces guilt—the exact emotion intended to alleviate.
+  > "A mental health tool must not weaponize loss aversion. If a student is having a hard week and misses three days, a broken streak induces guilt—the exact emotion we want to alleviate.
   >
-  > In Dear Alex, letters in the vault never expire. Every screen features a visible, penalty-free 'Not today' exit. Data stays on device, exportable as JSON or permanently deletable in one click."
+  > In Dear Alex, letters in your vault never expire. Every screen features a visible, penalty-free 'Not today' exit. Your data stays on your device, exportable as JSON or permanently deletable in one click."
 
 ---
 
@@ -94,23 +94,23 @@
 ### Slide 7 — Summary & Q&A (9:00 – 10:00)
 - **Visual**: Links to GitHub repository, MIT License (Deniz Ikili), and test commands.
 - **Script**:
-  > "Dear Alex proves that students already know how to be compassionate—they just need a little distance to hear their own voice. Thank you, and I am ready for questions."
+  > "Dear Alex proves that students already know how to be compassionate—they just need a little distance to hear their own voice. Thank you, and we're ready for your questions."
 
 ---
 
 ## Anticipated Judge Q&A & Rebuttals
 
 ### Q1: "Is this clinically validated?"
-> **Answer**: "No, and the system is very explicit about that in the README and UI: Dear Alex is a self-help reflection tool, not a medical device or therapy substitute. However, the foundational psychological mechanism—self-distancing and Solomon's Paradox—is supported by extensive empirical research from Ethan Kross and Igor Grossmann showing reduced cardiovascular reactivity and improved reasoning when adopting an outside perspective."
+> **Answer**: "No, and we are very explicit about that in our README and UI: Dear Alex is a self-help reflection tool, not a medical device or therapy substitute. However, the foundational psychological mechanism—self-distancing and Solomon's Paradox—is supported by extensive empirical research from Ethan Kross and Igor Grossmann showing reduced cardiovascular reactivity and improved reasoning when adopting an outside perspective."
 
 ### Q2: "What if someone enters language indicating immediate crisis?"
-> **Answer**: "Safety is the highest technical constraint. Before any user text is written to the SQLite database or logs, it passes through the regex safety gate. Explicit crisis phrases halt the game immediately and display Canadian 9-8-8 and UVic Counselling resources. Flagged text is discarded and never persisted to protect user privacy."
+> **Answer**: "Safety is our highest technical constraint. Before any user text is written to the SQLite database or logs, it passes through our regex safety gate. Explicit crisis phrases halt the game immediately and display Canadian 9-8-8 and UVic Counselling resources. Flagged text is discarded and never persisted to protect user privacy."
 
-### Q3: "Why build a rule-based story engine instead of calling an LLM like GPT-4?"
+### Q3: "Why did you build a rule-based story engine instead of calling an LLM like GPT-4?"
 > **Answer**: "Three crucial reasons:
 > 1. **Hackathon constraints**: No paid APIs or runtime costs.
 > 2. **Absolute Privacy**: Mental health reflections must never be transmitted to third-party cloud servers.
-> 3. **Determinism & Speed**: The rule-based alignment engine executes in under 2 milliseconds and is backed by 76 unit and edge-case tests with 100% predictable token mappings."
+> 3. **Determinism & Speed**: Our rule-based alignment engine executes in under 2 milliseconds and is backed by 60+ unit tests with 100% predictable token mappings."
 
 ### Q4: "Why no streaks or gamified levels?"
-> **Answer**: "Streaks create guilt on missed days. When a student is already overwhelmed by exams, an alert saying 'You lost your streak!' actively causes distress. Gamification is achieved through narrative, creativity, collection, and surprise—never through loss aversion or shame."
+> **Answer**: "Streaks create guilt on missed days. When a student is already overwhelmed by exams, an alert saying 'You lost your streak!' actively causes distress. We gamify through narrative, creativity, collection, and surprise—never through loss aversion or shame."
