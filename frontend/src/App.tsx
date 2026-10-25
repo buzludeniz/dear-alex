@@ -12,6 +12,7 @@ import {
   Sparkles,
   Sun,
   Trash2,
+  ShieldAlert,
   Volume2,
   Zap,
 } from "lucide-react";
@@ -226,6 +227,11 @@ export default function App() {
 
   if (screen === "crisis") return <main><Crisis message={crisis} reset={reset} /></main>;
 
+  function triggerCrisisDemo() {
+    setCrisis("If you or someone you know is in distress or crisis, support is available 24/7. Call or text 9-8-8 (Suicide Crisis Helpline) or contact UVic Student Wellness Centre.");
+    setScreen("crisis");
+  }
+
   return (
     <main>
       <header>
@@ -238,7 +244,7 @@ export default function App() {
           <button className="vault-link" onClick={() => void openVault()}><LockKeyhole size={14} /> Letter vault</button>
         </div>
       </header>
-      {screen === "checkin" && <Checkin mood={mood} setMood={setMood} next={() => setScreen("intake")} onDemo={() => void runDemo()} demoRunning={demoRunning} onDiagnostics={() => setShowDiagnostics(true)} />}
+      {screen === "checkin" && <Checkin mood={mood} setMood={setMood} next={() => setScreen("intake")} onDemo={() => void runDemo()} demoRunning={demoRunning} onDiagnostics={() => setShowDiagnostics(true)} onCrisisDemo={triggerCrisisDemo} />}
       {screen === "intake" && <Intake story={story} voice={voice} category={category} name={name} setStory={setStory} setVoice={setVoice} setCategory={setCategory} setName={setName} begin={() => void begin()} reset={reset} loading={loading} />}
       {screen === "scene" && <Scene scene={SCENES[step]} name={name || "Alex"} story={story} voice={voice} cards={cards.filter(c => c.scene === SCENES[step].key)} custom={custom} setCustom={setCustom} submit={submitAdvice} reaction={reaction} light={light} step={step} loading={loading} onExit={reset} />}
       {screen === "reveal" && <Reveal story={story} name={name || "Alex"} tokens={revealTokens} done={() => setScreen("letter")} />}
@@ -250,7 +256,7 @@ export default function App() {
   );
 }
 
-function Checkin({ mood, setMood, next, onDemo, demoRunning, onDiagnostics }: { mood: number | null; setMood: (n: number) => void; next: () => void; onDemo: () => void; demoRunning: boolean; onDiagnostics: () => void }) {
+function Checkin({ mood, setMood, next, onDemo, demoRunning, onDiagnostics, onCrisisDemo }: { mood: number | null; setMood: (n: number) => void; next: () => void; onDemo: () => void; demoRunning: boolean; onDiagnostics: () => void; onCrisisDemo: () => void }) {
   return (
     <section className="hero">
       <div className="hero-copy">
@@ -279,6 +285,9 @@ function Checkin({ mood, setMood, next, onDemo, demoRunning, onDiagnostics }: { 
           </button>
           <button className="text-small-diag" onClick={onDiagnostics}>
             <Activity size={13} /> Diagnostics & Tests
+          </button>
+          <button className="text-small-diag" onClick={onCrisisDemo} style={{ color: "var(--accent)", marginTop: "4px" }}>
+            <ShieldAlert size={13} /> Demo Crisis Hotline Screen
           </button>
         </div>
       </div>
@@ -548,9 +557,9 @@ function AlexFigure({ name, light, tiny = false }: { name: string; light: number
           <path d="M52 56 C50 48 54 44 60 44 C58 50 62 52 64 54 Z" fill="#2c221e" />
           <path d="M104 56 C106 48 102 44 96 44 C98 50 94 52 92 54 Z" fill="#2c221e" />
 
-          {/* Closed gentle smiling eyes */}
-          <path d="M64 64 C67 60 72 60 75 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          <path d="M81 64 C84 60 89 60 92 64" stroke="#4a3728" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+          {/* Relaxed Closed Smiling Eyes */}
+          <path d="M63 62 C66 58 71 58 74 62" stroke="#4a3728" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+          <path d="M82 62 C85 58 90 58 93 62" stroke="#4a3728" strokeWidth="2.8" strokeLinecap="round" fill="none" />
 
           {/* Peaceful Gentle Smile */}
           <path d="M73 71 C76 75 80 75 83 71" stroke="#8c583e" strokeWidth="2.2" strokeLinecap="round" fill="none" />
@@ -631,7 +640,7 @@ function HeroArtwork() {
       <div className="hill hill-back" />
       <div className="hill hill-front" />
       <div className="window-light" />
-      <AlexFigure name="Alex" light={0} tiny={true} />
+      <AlexFigure name="Alex" light={0} />
       <div className="star star-one">✦</div>
       <div className="star star-two">✦</div>
       <p>A small place<br />to come back to.</p>
