@@ -27,7 +27,7 @@ Three fast ways to see the entire system working:
 ### Option A: In-App Diagnostics & Live Test Launcher
 1. Start the servers (see Section 3 below).
 2. Open `http://localhost:5173` in a browser.
-3. Click **"Diagnostics & Tests"** or **"Demo Crisis Hotline Screen"** on the hero screen or top utility bar.
+3. Click **"Diagnostics & Tests"** on the hero screen or top utility bar.
 4. Run live tests for backend health, normal workflow simulation, and emergency crisis redirection directly inside the browser.
 
 ### Option B: The One-Command Automated Suite
@@ -154,12 +154,7 @@ flowchart LR
 
 Dear Alex comes with an extensive testing suite:
 
-### 1. GitHub Actions CI Automated Pipeline
-Pushing or opening a PR triggers `.github/workflows/ci.yml`, which automatically executes:
-- Backend `pytest` suite across Python 3.11.
-- Frontend TypeScript typechecking (`tsc -b`) and production asset build (`vite build`).
-
-### 2. Pytest Unit, Integration & Edge-Case Tests (76 Tests)
+### 1. Pytest Unit, Integration & Edge-Case Tests (76 Tests)
 Run from the `backend/` directory:
 ```bash
 .venv/bin/pytest -v
