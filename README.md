@@ -57,22 +57,31 @@ npm run dev
 
 Open `http://localhost:5173`. To add labelled demo data, run from `backend`: `python -m app.seed_demo`. Its terminal output prints the demo device ID; set that ID in browser localStorage under `dear-alex-device-id` to view it.
 
-## Automated showcase & demos
+## Automated showcase & test suite
 
-You can showcase the entire app in three ways:
+You can run automated end-to-end verification and interactive showcases in four ways:
 
-1. **In-App Auto-Demo (Zero setup)**:
+1. **Unified Master Test & Concurrency Suite (Recommended)**:
+   ```bash
+   python scripts/automated_system_test.py
+   ```
+   Automatically kickstarts servers and executes:
+   - **Stage 1**: Multi-threaded database concurrency stress test (measures throughput, p50/p95 latency, zero DB locks).
+   - **Stage 2**: Launches Chrome and drives a complete normal student session (mood, intake, 3 scenes, lantern glow, word-by-word reveal, letter vault).
+   - **Stage 3**: Launches Chrome and tests an emergency crisis interaction (verifies immediate 9-8-8 helpline & UVic Counselling routing, plus direct cryptographic verification that zero crisis text was saved to SQLite).
+   *(Add `--headless` to run Chrome without a visible window).*
+
+2. **In-App Auto-Demo (Zero setup)**:
    Open `http://localhost:5173` and click **"Watch auto-demo"** on the welcome screen. The app will automatically enter a realistic student scenario, coach Alex, morph the words in the Reveal, and seal the letter.
 
-2. **Terminal API Showcase Runner**:
+3. **Terminal API Showcase Runner**:
    ```bash
    python scripts/api_showcase.py
    ```
    Simulates and validates the complete game loop, self-distancing transform, 3 scenes, and letter generation in your terminal.
 
-3. **Browser Automation via Playwright**:
+4. **Standalone Browser Automation**:
    ```bash
-   pip install playwright && playwright install chromium
    python scripts/demo.py --headed --slow
    ```
 
