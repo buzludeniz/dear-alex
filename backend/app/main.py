@@ -25,7 +25,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-CARDS = json.loads((Path(__file__).parent / "content" / "cards.json").read_text())
+CARDS = json.loads((Path(__file__).parent / "content" / "cards.json").read_text(encoding="utf-8"))
 
 
 def device_id(x_device_id: str | None = Header(default=None)) -> str:
@@ -50,6 +50,8 @@ def ensure_device(db: Session, identifier: str) -> None:
         db.commit()
 
 
+@app.get("/")
+@app.get("/health")
 @app.get("/api/health")
 def health() -> dict:
     return {"ok": True}

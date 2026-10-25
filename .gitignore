@@ -10,3 +10,5 @@ frontend/vite.config.js
 frontend/vite.config.d.ts
 .env
 tmp/
+ai/
+hackathon_pacakage/

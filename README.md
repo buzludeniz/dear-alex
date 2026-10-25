@@ -12,18 +12,23 @@ After a disappointing grade, awkward interaction, or failed performance, student
 
 The player tells Alex’s story, offers three pieces of coaching, and receives their own advice as a saved letter. The mechanism is self-distancing, not points: viewing a situation from an outside perspective can support wiser reasoning and emotion regulation [1]–[3].
 
+Read [the full research basis document](docs/RESEARCH.md) for in-depth analysis of Solomon's Paradox and how each study maps directly to our design choices.
+
 ## Features
 
-- Optional 1–5 mood check-in and always-visible skip/exit paths.
-- Intake, category selection, and character naming.
-- Deterministic, aligned first-person-to-third-person story transformation with a safe fallback.
-- Crisis-language safety route that does not retain flagged text.
-- Three coaching scenes with Compassion, Perspective, and Action cards or free text.
-- A responsive CSS “Alex’s World,” plus reduced-motion support.
-- A skippable reveal and Letter to You.
-- Local SQLite vault and pressure-free collection.
-- Scored past-letter resurfacing, JSON export, and device-scoped deletion.
-- Demo seed data: `python -m app.seed_demo`.
+- **Optional 1–5 mood check-in** with always-visible skip/exit paths.
+- **Intake, category selection, and character naming** (personalize your companion).
+- **Deterministic, aligned first-person-to-third-person story engine** with confidence scoring and safe fallback.
+- **Crisis-language safety gate** that routes to Canadian 9-8-8 and UVic Counselling before saving to database.
+- **Three coaching scenes** with 18 curated Compassion, Perspective, and Action cards or free text.
+- **Dynamic visual world ("Alex’s World")**: sky, light level, and horizon brighten as kind advice is offered.
+- **Word-by-word Reveal animation**: tokens morph back into your own original sentences.
+- **Classical ambient music**: local, opt-in Web Audio synthesis playing Bach's C Major Prelude (BWV 846) arpeggios (zero network calls).
+- **Light & Dark mode**: seamless theme switching respecting accessibility and contrast.
+- **Automated showcase procedure**: click "Watch auto-demo" on the home screen or run our automated scripts.
+- **Local SQLite vault & collection slots** that celebrate growth without streak pressure.
+- **Scored past-letter resurfacing**, JSON export, and device-scoped deletion.
+- **Demo seed data**: `python -m app.seed_demo`.
 
 ## What we deliberately did not build
 
@@ -52,13 +57,24 @@ npm run dev
 
 Open `http://localhost:5173`. To add labelled demo data, run from `backend`: `python -m app.seed_demo`. Its terminal output prints the demo device ID; set that ID in browser localStorage under `dear-alex-device-id` to view it.
 
-## Two-minute demo
+## Automated showcase & demos
 
-1. Skip check-in or choose mood 2.
-2. Enter a mild academic worry and meet Alex.
-3. Choose one card in every coaching scene.
-4. Show the Reveal and Letter to You.
-5. Open Letter vault, then choose “Open a letter from past you.”
+You can showcase the entire app in three ways:
+
+1. **In-App Auto-Demo (Zero setup)**:
+   Open `http://localhost:5173` and click **"Watch auto-demo"** on the welcome screen. The app will automatically enter a realistic student scenario, coach Alex, morph the words in the Reveal, and seal the letter.
+
+2. **Terminal API Showcase Runner**:
+   ```bash
+   python scripts/api_showcase.py
+   ```
+   Simulates and validates the complete game loop, self-distancing transform, 3 scenes, and letter generation in your terminal.
+
+3. **Browser Automation via Playwright**:
+   ```bash
+   pip install playwright && playwright install chromium
+   python scripts/demo.py --headed --slow
+   ```
 
 ## Architecture
 
@@ -84,15 +100,16 @@ ruff check .
 black --check .
 ```
 
-Tests cover 30+ story-engine examples, crisis detection and false-positive guards, and deterministic resurfacing selection.
+Tests cover 60+ story-engine examples, crisis detection and false-positive guards, deterministic resurfacing selection, and complete end-to-end API workflows.
 
 ## Project structure
 
 ```text
 backend/app/       FastAPI, models, story engine, safety, seed script
-backend/tests/     pytest suite
-frontend/src/      React screens and interaction styles
-docs/              architecture, design principles, AI disclosure, media
+backend/tests/     pytest suite (61 tests covering engine, safety, resurfacing, showcase)
+frontend/src/      React screens, Web Audio classical synthesizer, and styles
+scripts/           Automated showcase scripts (in-browser Playwright & terminal runner)
+docs/              Research basis, architecture, design principles, AI disclosure
 ```
 
 ## Limitations and next steps
