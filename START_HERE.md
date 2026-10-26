@@ -1,6 +1,6 @@
-# START HERE: Developer Blueprint & Memory Recovery Guide
+# START HERE: Developer Blueprint & Master Onboarding Guide
 
-> *If you are reading this after losing memory of how this system was conceived, designed, and built: take a deep breath. This document contains the exact mental model, engineering philosophy, architectural rationale, and step-by-step orientation guide needed to pick up where development left off.*
+> *This document is the master mental model, quickstart guide, engineering philosophy, architectural rationale, and step-by-step orientation guide for **Dear Alex**.*
 
 ---
 
@@ -21,7 +21,89 @@ When human beings experience personal failure (a bombed midterm, an awkward inte
 
 ---
 
-## 2. Technical Decisions & Architectural Rationale
+## 2. Instant Kickstart & Developer Setup
+
+### Prerequisites
+- **Python**: 3.11+
+- **Node.js**: 20+ (with npm)
+- **OS**: Windows, macOS, or Linux
+
+### Three Fast Ways to See the System Working
+
+#### Option A: In-App Diagnostics & Live Test Launcher
+1. Start the backend and frontend development servers (see Manual Setup below).
+2. Open `http://localhost:5173` in a browser.
+3. Click **"Diagnostics & Tests"** on the hero screen or top utility bar.
+4. Run live tests for backend health, normal workflow simulation, and emergency crisis redirection directly inside the browser.
+
+#### Option B: The One-Command Automated Suite
+Run the unified automation script. It automatically kickstarts both servers, runs a database concurrency stress test, and launches Chrome to drive normal and emergency interactions:
+```bash
+python scripts/automated_system_test.py
+```
+*(Add `--headless` to run Chrome without a visible window).*
+
+#### Option C: The Zero-Setup In-App Auto-Demo
+1. Start the development servers.
+2. Open `http://localhost:5173` in a browser.
+3. Click **"Watch auto-demo"** on the welcome screen.
+4. Sit back and watch the application automatically enter a realistic academic setback, coach Alex, observe the lantern glowing, and execute the Reveal.
+
+---
+
+### Manual Step-by-Step Developer Setup
+
+#### Step 1: Start the Backend (FastAPI)
+Open a terminal in the project root:
+
+```bash
+cd backend
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# Windows PowerShell:
+.\.venv\Scripts\Activate.ps1
+# macOS/Linux:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start FastAPI server with live reload
+python -m uvicorn app.main:app --reload --port 8000
+```
+- The backend starts at `http://127.0.0.1:8000`.
+- Verify by visiting: `http://127.0.0.1:8000/health` (returns `{"ok": true}`).
+- View interactive Swagger documentation: `http://127.0.0.1:8000/docs`.
+
+#### Step 2: Start the Frontend (React + Vite)
+Open a second terminal in the project root:
+
+```bash
+cd frontend
+
+# Install npm packages
+npm install
+
+# Start Vite dev server
+npm run dev
+```
+- Open browser to `http://localhost:5173`.
+
+#### Step 3: Seed Demo Letters (Optional)
+To pre-populate the vault with labelled past letters for demonstration:
+
+```bash
+cd backend
+python -m app.seed_demo
+```
+*The command outputs a demo device UUID (e.g. `00000000-0000-0000-0000-000000000001`). Set this value in browser Developer Tools under `localStorage["dear-alex-device-id"]` to immediately explore a populated vault.*
+
+---
+
+## 3. Technical Decisions & Architectural Rationale
 
 Every technical choice in Dear Alex reflects intentional engineering constraints:
 
@@ -44,19 +126,19 @@ Every technical choice in Dear Alex reflects intentional engineering constraints
 
 ### D. The Anti-Features List (Ethical Engineering)
 Deliberately excluded:
-* No Streaks & Loss Mechanics: Broken streaks cause shame during low-energy/burnout periods. Letters never decay.
-* No Leaderboards & XP: Gamified social comparison exacerbates imposter syndrome.
-* No Push Notifications: Rushing users or interrupting them creates anxiety loops.
-* No User Accounts / Cloud Logins: Eliminates server-side privacy risk entirely. Device isolation is handled via a client-generated UUID stored in `localStorage`.
+* **No Streaks & Loss Mechanics**: Broken streaks cause shame during low-energy/burnout periods. Letters never decay.
+* **No Leaderboards & XP**: Gamified social comparison exacerbates imposter syndrome.
+* **No Push Notifications**: Rushing users or interrupting them creates anxiety loops.
+* **No User Accounts / Cloud Logins**: Eliminates server-side privacy risk entirely. Device isolation is handled via a client-generated UUID stored in `localStorage`.
 
 ---
 
-## 3. System Architecture & Map of Codebase
+## 4. System Architecture & Map of Codebase
 
 ```
 dear-alex/
-├── START_HERE.md                 # <--- YOU ARE HERE
-├── README.md                     # High-level overview & quickstart
+├── START_HERE.md                 # <--- YOU ARE HERE (Master Blueprint & Onboarding Guide)
+├── README.md                     # High-level overview
 ├── backend/
 │   ├── app/
 │   │   ├── main.py               # FastAPI entry point & REST endpoints
@@ -85,10 +167,7 @@ dear-alex/
 ├── docs/                         # In-depth technical & research docs
 │   ├── ARCHITECTURE.md
 │   ├── DESIGN_PRINCIPLES.md
-│   ├── RESEARCH.md
-│   ├── STARTER_GUIDE.md
-│   ├── PRESENTATION.md
-│   └── AI_USAGE.md
+│   └── RESEARCH.md
 └── scripts/                      # Automated showcase and test runners
     ├── automated_system_test.py  # Unified 3-stage concurrency & Chrome test suite
     ├── api_showcase.py           # Pure terminal API workflow runner
@@ -97,7 +176,7 @@ dear-alex/
 
 ---
 
-## 4. Key Subsystems & Mental Models
+## 5. Key Subsystems & Mental Models
 
 ### Subsystem 1: The Story Engine (`backend/app/story_engine.py`)
 - **How it works**: Uses regex tokenization that preserves whitespace, punctuation, and casing.
@@ -117,7 +196,31 @@ Selects stochastically among top candidates to provide fresh, relevant past wisd
 
 ---
 
-## 5. Failure Modes, Edge Cases & Defenses
+## 6. Testing & Quality Assurance Suite
+
+Dear Alex comes with an extensive testing suite:
+
+### 1. Pytest Unit, Integration & Edge-Case Tests (76 Tests)
+Run from the `backend/` directory:
+```bash
+.venv/bin/pytest -v
+```
+- `tests/test_story_engine.py`: Pronouns, irregular verbs, contractions, capitalization, custom names, and fallback templates.
+- `tests/test_safety.py`: Crisis phrases, false-positive guards (*"die my hair"*), and multi-field inputs.
+- `tests/test_resurface.py`: Determinism of weighted letter selection and empty vault handling.
+- `tests/test_api_showcase.py`: Complete API workflow test through FastAPI's TestClient.
+- `tests/test_edge_cases.py`: Multi-threaded database concurrency stress test, multi-field crisis checks, and resurfacing recency decay math.
+
+### 2. Database Concurrency Stress Test
+Run the concurrency suite to simulate simultaneous users executing full reflection sessions:
+```bash
+python scripts/automated_system_test.py --stress-only
+```
+- Confirms zero database locks under SQLite WAL mode with 175+ requests/sec throughput.
+
+---
+
+## 7. Failure Modes, Edge Cases & Defenses
 
 1. **SQLite Database Locking**:
    - *Risk*: Concurrent reads/writes during session completion locking DB.
@@ -133,9 +236,9 @@ Selects stochastically among top candidates to provide fresh, relevant past wisd
 
 ---
 
-## 6. Memory Recovery Step-by-Step Checklist
+## 8. Development Verification Checklist
 
-When returning to the repository, follow these steps in order:
+When returning to or verifying the repository, follow these steps in order:
 
 1. **Run Backend Unit & Edge-Case Tests**:
    ```bash
