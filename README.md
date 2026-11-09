@@ -10,7 +10,7 @@ Dear Alex is a private, playful self-help experience for university students aft
 
 If you are a developer or reviewer, start here:
 - [START_HERE.md](START_HERE.md): Master developer blueprint, memory recovery guide, architectural rationale, and engineering mental model.
-- [docs/STARTER_GUIDE.md](docs/STARTER_GUIDE.md): Quickstart guide and onboarding instructions.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): Architecture and data flow.
 
 ---
 
@@ -34,7 +34,7 @@ Read [the full research basis document](docs/RESEARCH.md) for in-depth analysis 
 - **Dynamic visual world ("Alex’s World")**: sky, light level, and horizon brighten as kind advice is offered.
 - **Word-by-word Reveal animation**: tokens morph back into your own original sentences.
 - **In-App Diagnostics & Test Launcher**: Direct header button to launch live tests for backend health, normal workflow simulation, and emergency crisis redirection verification right in the browser.
-- **Classical ambient music**: local, opt-in Web Audio synthesis playing Bach's C Major Prelude (BWV 846) arpeggios (zero network calls).
+- **Classical ambient music**: local, opt-in Web Audio synthesis of an original Satie/Bach-inspired piano nocturne (zero network calls).
 - **Light & Dark mode**: seamless theme switching respecting accessibility and contrast.
 - **Automated showcase procedure**: click "Watch auto-demo" on the home screen or run the automated scripts.
 - **Local SQLite vault & collection slots** that celebrate growth without streak pressure.
@@ -84,10 +84,10 @@ You can run automated end-to-end verification and interactive showcases in four 
    python scripts/automated_system_test.py
    ```
    Automatically kickstarts servers and executes:
-   - **Stage 1**: Multi-threaded database concurrency stress test (measures throughput, p50/p95 latency, zero DB locks).
-   - **Stage 2**: Launches Chrome and drives a complete normal student session (mood, intake, 3 scenes, lantern glow, word-by-word reveal, letter vault).
-   - **Stage 3**: Launches Chrome and tests an emergency crisis interaction (verifies immediate 9-8-8 helpline & UVic Counselling routing, plus direct cryptographic verification that zero crisis text was saved to SQLite).
-   *(Add `--headless` to run Chrome without a visible window).*
+   - **Stage 1**: Multi-threaded database concurrency stress test (measures throughput and p50/p95 latency, and fails if any request errors; SQLite runs in WAL mode).
+   - **Stage 2**: Launches Chromium (via Playwright) and drives a complete normal student session (mood, intake, 3 scenes, lantern glow, word-by-word reveal, letter vault).
+   - **Stage 3**: Launches Chromium and tests an emergency crisis interaction (verifies immediate 9-8-8 helpline & UVic Counselling routing, plus a direct SQLite query confirming the crisis phrases were not saved).
+   *(Add `--headless` to run the browser without a visible window. Requires `pip install playwright && playwright install chromium`.)*
 
 2. **In-App Auto-Demo (Zero setup)**:
    Open `http://localhost:5173` and click **"Watch auto-demo"** on the welcome screen. The app will automatically enter a realistic student scenario, coach Alex, morph the words in the Reveal, and seal the letter.
@@ -120,7 +120,7 @@ This is not therapy or a substitute for professional care. A conservative safety
 
 ## Testing
 
-- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `pytest` tests and frontend `npm run build` on every push and pull request.
+- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `pytest` tests and frontend `npm run build` on pushes to `main` and on pull requests into `main`.
 - **In-App Diagnostics & Crisis Demo**: In the frontend UI, click **Diagnostics & Tests** or **Demo Crisis Hotline Screen** to test API health, application flow, and safety gates live.
 - **Backend Test Suite**:
 ```bash
@@ -128,7 +128,7 @@ cd backend
 .venv/bin/pytest -v
 ```
 
-Tests cover 76 story-engine examples, crisis detection and false-positive guards, deterministic resurfacing selection, multi-thread DB concurrency, and complete end-to-end API workflows.
+The 76 tests cover 32 story-engine cases, crisis detection and false-positive guards, deterministic resurfacing selection, edge cases including multi-thread DB access, and an end-to-end API workflow.
 
 ## Project Structure
 
@@ -138,7 +138,7 @@ backend/app/       FastAPI, models, story engine, safety, seed script
 backend/tests/     pytest suite (76 tests covering engine, safety, resurfacing, showcase, edge cases)
 frontend/src/      React screens, Diagnostics modal, Web Audio classical synthesizer, and styles
 scripts/           Automated showcase scripts (in-browser Playwright & terminal runner)
-docs/              Research basis, architecture, design principles, starter guide, presentation, AI disclosure, agent disclosure
+docs/              Research basis, architecture, design principles, agent disclosure
 ```
 
 ## Limitations and Next Steps
@@ -147,7 +147,7 @@ The rule-based language transform only supports common English first-person form
 
 ## AI Usage
 
-See [AI usage disclosure](docs/AI_USAGE.md).
+See the [agent disclosure](docs/AGENTS.md).
 
 ## License
 

@@ -121,7 +121,7 @@ Every technical choice in Dear Alex reflects intentional engineering constraints
 ### C. Web Audio API Synthesis vs. Audio File Downloads
 * **Why synthesize classical audio locally in code?**
   - Zero asset downloads (no large MP3s or WAV files).
-  - Uses additive sine synthesis, simulated hammer transients, and an algorithmic convolver reverb to recreate J.S. Bach (BWV 846) and Erik Satie inspired classical piano voicings locally in JavaScript.
+  - Uses additive sine synthesis, simulated hammer transients, and an algorithmic convolver reverb to play an original Satie/Bach-inspired piano nocturne locally in JavaScript.
   - Fully opt-in: respects browser autoplay restrictions and user sensory preferences.
 
 ### D. The Anti-Features List (Ethical Engineering)
