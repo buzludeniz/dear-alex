@@ -15,18 +15,15 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
 
-from app.database import Base, get_db
 from app.main import app
-from app.models import Letter, SessionRecord
 from app.resurface import choose, score
 from app.safety import any_flagged, is_flagged
 from app.story_engine import transform
 
 
 # --- 1. Story Engine Edge Cases ---
+
 
 def test_custom_character_name_substitution():
     text = "I am worried about my midterm. I feel overwhelmed."
@@ -58,6 +55,7 @@ def test_quoted_fallback_when_no_first_person_pronouns():
 
 
 # --- 2. Safety Gate Boundary Conditions ---
+
 
 @pytest.mark.parametrize(
     "text",
@@ -94,6 +92,7 @@ def test_multi_field_safety_check():
 
 # --- 3. Vault Resurfacing Boundary Math ---
 
+
 class MockLetter:
     def __init__(self, category: str, letter_type: str, last_resurfaced_at: datetime | None):
         self.category = category
@@ -115,7 +114,6 @@ def test_resurfacing_recency_penalty_decay():
 
 
 def test_resurfacing_choice_from_multiple_candidates():
-    now = datetime.now(timezone.utc)
     letters = [
         MockLetter("Academic", "Compassion", None),
         MockLetter("Social", "Perspective", None),
@@ -127,6 +125,7 @@ def test_resurfacing_choice_from_multiple_candidates():
 
 
 # --- 4. FastAPI Concurrency & Database Integration ---
+
 
 def test_api_concurrency_stress(tmp_path):
     client = TestClient(app)

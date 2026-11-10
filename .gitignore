@@ -6,3 +6,6 @@ dist/
 *.sqlite
 *.db
 .DS_Store
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts

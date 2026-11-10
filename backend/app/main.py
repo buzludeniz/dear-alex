@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import UUID
@@ -18,10 +19,19 @@ from .schemas import AdviceCreate, FinishRequest, SessionCreate, StoryRequest
 from .story_engine import transform
 
 Base.metadata.create_all(bind=engine)
+DEFAULT_CORS_ORIGINS = "http://localhost:5173"
+
+
+def cors_origins() -> list[str]:
+    """Allowed CORS origins from the comma-separated CORS_ORIGINS env var."""
+    raw = os.environ.get("CORS_ORIGINS") or DEFAULT_CORS_ORIGINS
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
+
 app = FastAPI(title="Dear Alex API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=cors_origins(),
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -47,7 +47,7 @@ No streaks, streak restores, XP loss, push notifications, leaderboards, accounts
 
 ## Quick Start
 
-Prerequisites: Python 3.11+ and Node.js 20+.
+Prerequisites: Python 3.11+ and Node.js 22+.
 
 ### 1. Terminal 1: Backend (FastAPI)
 ```bash
@@ -72,6 +72,12 @@ npm run dev
 ```
 
 Open `http://localhost:5173` in your browser.
+
+### Configuration
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated list of browser origins the backend allows via CORS, e.g. `CORS_ORIGINS=https://app.example.com,http://localhost:5173`. |
 
 To pre-populate demo data into the vault, run from `backend` directory: `python -m app.seed_demo`. Its terminal output prints the demo device ID; set that ID in browser localStorage under `dear-alex-device-id` to view it.
 
@@ -120,7 +126,7 @@ This is not therapy or a substitute for professional care. A conservative safety
 
 ## Testing
 
-- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `pytest` tests and frontend `npm run build` on pushes to `main` and on pull requests into `main`.
+- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `ruff check`, `ruff format --check` and `pytest`, and frontend `npm ci`, `npm run lint` and `npm run build` on pushes to `main` and on pull requests into `main`.
 - **In-App Diagnostics & Crisis Demo**: In the frontend UI, click **Diagnostics & Tests** or **Demo Crisis Hotline Screen** to test API health, application flow, and safety gates live.
 - **Backend Test Suite**:
 ```bash
