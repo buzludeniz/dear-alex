@@ -96,6 +96,17 @@ You can run automated end-to-end verification and interactive showcases in four 
    - **Stage 3**: Launches Chromium and tests an emergency crisis interaction (verifies immediate 9-8-8 helpline & UVic Counselling routing, plus a direct SQLite query confirming the crisis phrases were not saved).
    *(Add `--headless` to run the browser without a visible window. Requires `pip install playwright && playwright install chromium`.)*
 
+   **Running the end-to-end suite locally** (the same way CI does):
+   ```bash
+   pip install -r backend/requirements.txt -r scripts/requirements-e2e.txt
+   playwright install chromium            # add --with-deps on a fresh Linux box
+   (cd frontend && npm ci && npm run build)
+   (cd backend && python -m uvicorn app.main:app --port 8000) &
+   (cd frontend && npx vite preview --port 5173 --strictPort) &
+   python scripts/automated_system_test.py --headless
+   ```
+   If the servers are not already running the script starts the backend and the Vite dev server itself. Set `E2E_ARTIFACT_DIR=some/dir` to get a failure screenshot and a Playwright trace (`npx playwright show-trace <file>.zip`) when a browser stage fails.
+
 2. **In-App Auto-Demo (Zero setup)**:
    Open `http://localhost:5173` and click **"Watch auto-demo"** on the welcome screen. The app will automatically enter a realistic student scenario, coach Alex, morph the words in the Reveal, and seal the letter.
 
@@ -127,7 +138,7 @@ This is not therapy or a substitute for professional care. A conservative safety
 
 ## Testing
 
-- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `ruff check`, `ruff format --check` and `pytest`, and frontend `npm ci`, `npm run lint`, `npm test` (Vitest) and `npm run build` on pushes to `main` and on pull requests into `main`.
+- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `ruff check`, `ruff format --check` and `pytest`, frontend `npm ci`, `npm run lint`, `npm test` (Vitest) and `npm run build`, and the headless Playwright end-to-end suite (its own `e2e` job; screenshots, traces and server logs are uploaded as an artifact on failure) on pushes to `main` and on pull requests into `main`.
 - **In-App Diagnostics & Crisis Demo**: In the frontend UI, click **Diagnostics & Tests** or **Demo Crisis Hotline Screen** to test API health, application flow, and safety gates live.
 - **Frontend Unit Tests** (`cd frontend && npm test`): Vitest + Testing Library cover the accessibility-preference logic and that the settings UI applies and persists it.
 - **Backend Test Suite**:
