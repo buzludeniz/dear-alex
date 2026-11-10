@@ -36,6 +36,7 @@ import time
 import urllib.error
 import urllib.request
 import uuid
+from contextlib import asynccontextmanager
 from typing import Dict, List, Optional, Tuple
 
 # Enable UTF-8 on Windows terminal
@@ -103,6 +104,37 @@ def http_req(api_base: str, path: str, method: str = "GET", data: dict = None, h
     except Exception as exc:
         elapsed = time.perf_counter() - t0
         return 500, {"error": str(exc)}, elapsed
+
+
+
+ARTIFACT_DIR = os.environ.get("E2E_ARTIFACT_DIR")
+
+
+@asynccontextmanager
+async def browser_page(pw, name: str, headless: bool, slow_mo: int):
+    """Yield a page; if the body raises and E2E_ARTIFACT_DIR is set, save a
+    screenshot and a Playwright trace there so CI can upload them."""
+    browser = await pw.chromium.launch(headless=headless, slow_mo=slow_mo)
+    context = await browser.new_context(viewport={"width": 1280, "height": 840})
+    if ARTIFACT_DIR:
+        await context.tracing.start(screenshots=True, snapshots=True)
+    page = await context.new_page()
+    try:
+        yield page
+    except BaseException:
+        if ARTIFACT_DIR:
+            os.makedirs(ARTIFACT_DIR, exist_ok=True)
+            try:
+                await page.screenshot(path=os.path.join(ARTIFACT_DIR, f"{name}-failure.png"), full_page=True)
+                await context.tracing.stop(path=os.path.join(ARTIFACT_DIR, f"{name}-trace.zip"))
+            except Exception as exc:  # never mask the original failure
+                print(f"  (could not save failure artifacts: {exc})")
+        raise
+    finally:
+        try:
+            await context.close()
+        finally:
+            await browser.close()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -290,90 +322,85 @@ async def run_chrome_normal_flow(frontend_url: str, headless: bool = False) -> b
     info(f"Opening Chrome to {frontend_url} (Headless={headless})")
 
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch(
-            headless=headless,
-            slow_mo=45,
-        )
-        context = await browser.new_context(viewport={"width": 1280, "height": 840})
-        page = await context.new_page()
+        async with browser_page(pw, "stage2-normal", headless, 45) as page:
 
-        subheader("2.1 Welcome Screen & Mood Check-in")
-        await page.goto(frontend_url, wait_until="networkidle")
-        success("Home screen loaded.")
-        await page.wait_for_timeout(700)
+            subheader("2.1 Welcome Screen & Mood Check-in")
+            await page.goto(frontend_url, wait_until="networkidle")
+            success("Home screen loaded.")
+            await page.wait_for_timeout(700)
 
-        mood_buttons = page.locator('[role="radio"]')
-        await mood_buttons.nth(1).click()  # Mood 2 "Tender"
-        success("Selected mood 2 ('Tender').")
-        await page.wait_for_timeout(600)
-        await page.locator("text=Begin gently").click()
+            mood_buttons = page.locator('[role="radio"]')
+            await mood_buttons.nth(1).click()  # Mood 2 "Tender"
+            success("Selected mood 2 ('Tender').")
+            await page.wait_for_timeout(600)
+            await page.locator("text=Begin gently").click()
 
-        subheader("2.2 Intake: Telling Alex's Story")
-        await page.wait_for_selector("text=Tell Alex's story", timeout=8000)
+            subheader("2.2 Intake: Telling Alex's Story")
+            await page.wait_for_selector("text=Tell Alex's story", timeout=8000)
 
-        story_text = "I got my midterm back and it was much worse than I hoped. I studied for weeks and still failed."
-        critic_text = "I am not cut out for this program."
+            story_text = "I got my midterm back and it was much worse than I hoped. I studied for weeks and still failed."
+            critic_text = "I am not cut out for this program."
 
-        story_box = page.locator("textarea").first
-        await story_box.focus()
-        await story_box.type(story_text, delay=18)
-        success(f"Typed user story: \"{story_text}\"")
+            story_box = page.locator("textarea").first
+            await story_box.focus()
+            await story_box.type(story_text, delay=18)
+            success(f"Typed user story: \"{story_text}\"")
 
-        await page.wait_for_timeout(350)
-        critic_box = page.locator("textarea").nth(1)
-        await critic_box.focus()
-        await critic_box.type(critic_text, delay=20)
-        success(f"Typed inner voice: \"{critic_text}\"")
+            await page.wait_for_timeout(350)
+            critic_box = page.locator("textarea").nth(1)
+            await critic_box.focus()
+            await critic_box.type(critic_text, delay=20)
+            success(f"Typed inner voice: \"{critic_text}\"")
 
-        await page.wait_for_timeout(300)
-        await page.locator("button", has_text="Academic").click()
-        success("Category set to Academic.")
+            await page.wait_for_timeout(300)
+            await page.locator("button", has_text="Academic").click()
+            success("Category set to Academic.")
 
-        await page.wait_for_timeout(500)
-        await page.locator("button", has_text="Meet").click()
-        success("Submitted intake.")
+            await page.wait_for_timeout(500)
+            await page.locator("button", has_text="Meet").click()
+            success("Submitted intake.")
 
-        subheader("2.3 Coaching Alex Through Three Scenes")
-        await page.wait_for_selector(".cards button", timeout=8000)
+            subheader("2.3 Coaching Alex Through Three Scenes")
+            await page.wait_for_selector(".cards button", timeout=8000)
 
-        for scene_idx, scene_name in enumerate(["The moment", "The voice", "Tomorrow"]):
-            await page.wait_for_timeout(800)
-            cards = page.locator(".cards button")
-            count = await cards.count()
-            assert count > 0, f"No cards found for scene {scene_name}"
+            for scene_idx, scene_name in enumerate(["The moment", "The voice", "Tomorrow"]):
+                # Wait for the app to actually show this scene (not a fixed sleep):
+                # the previous scene's cards stay on screen until the step advances.
+                await page.locator("p.eyebrow", has_text=f"Scene {scene_idx + 1} of 3").wait_for(timeout=10000)
+                cards = page.locator(".cards button")
+                await cards.first.wait_for(timeout=8000)
+                count = await cards.count()
+                assert count > 0, f"No cards found for scene {scene_name}"
 
-            first_card_text = await cards.first.locator("span").text_content()
-            await cards.first.click()
-            success(f"Scene {scene_idx+1} ({scene_name}): selected card \"{first_card_text[:40]}...\"")
-            await page.wait_for_timeout(1400)
+                first_card_text = await cards.first.locator("span").text_content()
+                await cards.first.click()
+                success(f"Scene {scene_idx+1} ({scene_name}): selected card \"{first_card_text[:40]}...\"")
 
-        subheader("2.4 The Reveal — Word-by-Word Morph Animation")
-        await page.wait_for_selector("text=That advice was", timeout=10000)
-        success("The Reveal triggered: 'That advice was for you.'")
-        info("Watching token-by-token word morph animation re-anchor the coaching advice to the user...")
-        await page.wait_for_timeout(3800)
+            subheader("2.4 The Reveal — Word-by-Word Morph Animation")
+            await page.wait_for_selector("text=That advice was", timeout=10000)
+            success("The Reveal triggered: 'That advice was for you.'")
+            info("Watching token-by-token word morph animation re-anchor the coaching advice to the user...")
+            await page.wait_for_timeout(3800)
 
-        await page.locator("text=Read your letter").click()
+            await page.locator("text=Read your letter").click()
 
-        subheader("2.5 Letter to You & The Private Vault")
-        await page.wait_for_selector("text=Dear you", timeout=8000)
-        success("Letter to You synthesized and reviewed.")
-        await page.wait_for_timeout(1000)
+            subheader("2.5 Letter to You & The Private Vault")
+            await page.wait_for_selector("text=Dear you", timeout=8000)
+            success("Letter to You synthesized and reviewed.")
+            await page.wait_for_timeout(1000)
 
-        await page.locator("text=Seal in vault").click()
-        success("Letter sealed into local vault.")
+            await page.locator("text=Seal in vault").click()
+            success("Letter sealed into local vault.")
 
-        await page.wait_for_selector("text=Letter vault", timeout=8000)
-        success("Vault view opened: collection slots visible.")
-        await page.wait_for_timeout(700)
+            await page.wait_for_selector("text=Letter vault", timeout=8000)
+            success("Vault view opened: collection slots visible.")
+            await page.wait_for_timeout(700)
 
-        await page.locator("text=Open a letter from past you").click()
-        await page.wait_for_timeout(1000)
-        success("Scored past letter resurfaced successfully.")
+            await page.locator("text=Open a letter from past you").click()
+            await page.wait_for_timeout(1000)
+            success("Scored past letter resurfaced successfully.")
 
-        await page.wait_for_timeout(1200)
-        await context.close()
-        await browser.close()
+            await page.wait_for_timeout(1200)
 
     return True
 
@@ -392,53 +419,46 @@ async def run_chrome_emergency_flow(frontend_url: str, headless: bool = False, d
     crisis_critic = "I have no reason to live."
 
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch(
-            headless=headless,
-            slow_mo=50,
-        )
-        context = await browser.new_context(viewport={"width": 1280, "height": 840})
-        page = await context.new_page()
+        async with browser_page(pw, "stage3-emergency", headless, 50) as page:
 
-        # 1. Load app and skip check-in
-        await page.goto(frontend_url, wait_until="networkidle")
-        await page.wait_for_timeout(600)
-        await page.locator("text=Skip check-in").click()
-        await page.wait_for_selector("text=Tell Alex's story", timeout=8000)
+            # 1. Load app and skip check-in
+            await page.goto(frontend_url, wait_until="networkidle")
+            await page.wait_for_timeout(600)
+            await page.locator("text=Skip check-in").click()
+            await page.wait_for_selector("text=Tell Alex's story", timeout=8000)
 
-        # 2. Input crisis wording
-        subheader("3.1 Submitting Explicit Crisis Language in Chrome")
-        info(f"Typing crisis statement: \"{crisis_story}\"")
-        story_box = page.locator("textarea").first
-        await story_box.focus()
-        await story_box.type(crisis_story, delay=20)
+            # 2. Input crisis wording
+            subheader("3.1 Submitting Explicit Crisis Language in Chrome")
+            info(f"Typing crisis statement: \"{crisis_story}\"")
+            story_box = page.locator("textarea").first
+            await story_box.focus()
+            await story_box.type(crisis_story, delay=20)
 
-        critic_box = page.locator("textarea").nth(1)
-        await critic_box.focus()
-        await critic_box.type(crisis_critic, delay=20)
+            critic_box = page.locator("textarea").nth(1)
+            await critic_box.focus()
+            await critic_box.type(crisis_critic, delay=20)
 
-        await page.wait_for_timeout(400)
-        await page.locator("button", has_text="Meet").click()
+            await page.wait_for_timeout(400)
+            await page.locator("button", has_text="Meet").click()
 
-        # 3. Verify Immediate Crisis Intervention Screen
-        subheader("3.2 Verifying Immediate Emergency Intervention Screen")
-        await page.wait_for_selector("text=You deserve support right now", timeout=8000)
-        success("Emergency safety gate triggered immediately! Normal game loop suspended.")
+            # 3. Verify Immediate Crisis Intervention Screen
+            subheader("3.2 Verifying Immediate Emergency Intervention Screen")
+            await page.wait_for_selector("text=You deserve support right now", timeout=8000)
+            success("Emergency safety gate triggered immediately! Normal game loop suspended.")
 
-        # Check call and text 9-8-8 buttons
-        call_btn = page.locator('a[href="tel:988"]')
-        text_btn = page.locator('a[href="sms:988"]')
-        assert await call_btn.is_visible(), "Call 9-8-8 button missing!"
-        assert await text_btn.is_visible(), "Text 9-8-8 button missing!"
-        success("Emergency Call 9-8-8 button verified (tel:988).")
-        success("Emergency Text 9-8-8 button verified (sms:988).")
+            # Check call and text 9-8-8 buttons
+            call_btn = page.locator('a[href="tel:988"]')
+            text_btn = page.locator('a[href="sms:988"]')
+            assert await call_btn.is_visible(), "Call 9-8-8 button missing!"
+            assert await text_btn.is_visible(), "Text 9-8-8 button missing!"
+            success("Emergency Call 9-8-8 button verified (tel:988).")
+            success("Emergency Text 9-8-8 button verified (sms:988).")
 
-        content = await page.content()
-        assert "9-8-8" in content
-        success("Canadian 9-8-8 Suicide Crisis Helpline and UVic Counselling resources prominently displayed.")
+            content = await page.content()
+            assert "9-8-8" in content
+            success("Canadian 9-8-8 Suicide Crisis Helpline and UVic Counselling resources prominently displayed.")
 
-        await page.wait_for_timeout(2000)
-        await context.close()
-        await browser.close()
+            await page.wait_for_timeout(2000)
 
     # 4. Strict Database Verification: Confirm crisis text was NEVER persisted
     subheader("3.3 Cryptographic Safety Gate Verification (Zero DB Retention)")
