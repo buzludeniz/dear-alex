@@ -1069,11 +1069,52 @@ summary {
 .log-error { color: #d32f2f; }
 .log-warning { color: #e65100; }
 
-/* ── Reduced motion ─────────────────────────────────────────────── */
+/* ── Accessibility preferences ──────────────────────────────────────
+   JS resolves "follow my device" vs. an explicit choice and sets
+   data-motion / data-contrast / data-text-size on <html>. Before it runs
+   (no attribute yet) the OS media queries apply, so nothing flashes. */
+:root[data-motion="reduce"] *, :root[data-motion="reduce"] *::before, :root[data-motion="reduce"] *::after {
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .01ms !important;
+  scroll-behavior: auto !important;
+}
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  :root:not([data-motion]) *, :root:not([data-motion]) *::before, :root:not([data-motion]) *::after {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
 }
+
+:root[data-text-size="large"] { font-size: 125%; }
+
+:root[data-contrast="more"] {
+  --text: #0d1a28;
+  --text-muted: #25403d;
+  --accent: #1d4448;
+  --border: #5a6f6c;
+}
+:root[data-contrast="more"][data-theme="dark"] {
+  --text: #ffffff;
+  --text-muted: #cfe0dd;
+  --accent: #8fc7ce;
+  --border: #8ba8a4;
+}
+:root[data-contrast="more"] button, :root[data-contrast="more"] textarea, :root[data-contrast="more"] input { border-width: 2px; }
+@media (prefers-contrast: more) {
+  :root:not([data-contrast]) { --text-muted: #25403d; --border: #5a6f6c; }
+}
+
+/* Settings panel */
+.a11y { position: relative; }
+.a11y-panel {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 20;
+  width: min(300px, 90vw); padding: 16px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 24px var(--shadow);
+}
+.a11y-panel fieldset { border: 0; margin: 0 0 12px; padding: 0; }
+.a11y-panel legend { font-weight: 700; margin-bottom: 4px; padding: 0; }
+.a11y-panel label { display: flex; align-items: center; gap: 8px; min-height: 32px; cursor: pointer; }
+.a11y-note { margin: 0 0 4px; color: var(--text-muted); font-size: .85rem; }

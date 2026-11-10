@@ -36,6 +36,7 @@ Read [the full research basis document](docs/RESEARCH.md) for in-depth analysis 
 - **In-App Diagnostics & Test Launcher**: Direct header button to launch live tests for backend health, normal workflow simulation, and emergency crisis redirection verification right in the browser.
 - **Classical ambient music**: local, opt-in Web Audio synthesis of an original Satie/Bach-inspired piano nocturne (zero network calls).
 - **Light & Dark mode**: seamless theme switching respecting accessibility and contrast.
+- **Accessibility preferences**: the accessibility button in the header opens motion, contrast and text-size settings. Each follows your device (`prefers-reduced-motion`, `prefers-contrast`) by default, can be overridden, and is stored only in this browser (`localStorage`, key `dear-alex-a11y`).
 - **Automated showcase procedure**: click "Watch auto-demo" on the home screen or run the automated scripts.
 - **Local SQLite vault & collection slots** that celebrate growth without streak pressure.
 - **Scored past-letter resurfacing**, JSON export, and device-scoped deletion.
@@ -137,8 +138,9 @@ This is not therapy or a substitute for professional care. A conservative safety
 
 ## Testing
 
-- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `ruff check`, `ruff format --check` and `pytest`, frontend `npm ci`, `npm run lint` and `npm run build`, and the headless Playwright end-to-end suite (its own `e2e` job; screenshots, traces and server logs are uploaded as an artifact on failure) on pushes to `main` and on pull requests into `main`.
+- **GitHub Actions CI Workflow**: GitHub Actions automatically runs backend `ruff check`, `ruff format --check` and `pytest`, frontend `npm ci`, `npm run lint`, `npm test` (Vitest) and `npm run build`, and the headless Playwright end-to-end suite (its own `e2e` job; screenshots, traces and server logs are uploaded as an artifact on failure) on pushes to `main` and on pull requests into `main`.
 - **In-App Diagnostics & Crisis Demo**: In the frontend UI, click **Diagnostics & Tests** or **Demo Crisis Hotline Screen** to test API health, application flow, and safety gates live.
+- **Frontend Unit Tests** (`cd frontend && npm test`): Vitest + Testing Library cover the accessibility-preference logic and that the settings UI applies and persists it.
 - **Backend Test Suite**:
 ```bash
 cd backend
@@ -160,7 +162,7 @@ docs/              Research basis, architecture, design principles, agent disclo
 
 ## Limitations and Next Steps
 
-The rule-based language transform only supports common English first-person forms and uses a quoted fallback for uncertain text. The crisis check is not a clinical assessment. Future work could include expanded linguistic rules, locally stored accessibility preferences, and user research with appropriate ethics review.
+The rule-based language transform only supports common English first-person forms and uses a quoted fallback for uncertain text. The crisis check is not a clinical assessment. Future work could include expanded linguistic rules and user research with appropriate ethics review.
 
 ## AI Usage
 

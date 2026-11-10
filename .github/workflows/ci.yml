@@ -67,6 +67,11 @@ jobs:
           cd frontend
           npm run lint
 
+      - name: Unit tests (Vitest)
+        run: |
+          cd frontend
+          npm test
+
       - name: Run Build & Typecheck
         run: |
           cd frontend
