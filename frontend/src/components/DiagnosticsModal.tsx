@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Activity, AlertTriangle, CheckCircle, Play, ShieldAlert, X } from "lucide-react";
-import { API, deviceId, request } from "../lib/api";
+import { deviceId, request } from "../lib/api";
 
 interface DiagnosticsModalProps {
   onClose: () => void;

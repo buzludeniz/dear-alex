@@ -169,7 +169,7 @@ export default function App() {
 
     // Begin (direct API call — avoids stale closure on story/voice state)
     setLoading(true);
-    let sid = "";
+    let sid: string;
     try {
       const checked = await request<{ safe: boolean; message?: string }>("/story", { method: "POST", body: JSON.stringify({ story: DEMO.story, character_name: DEMO.name }) });
       if (!checked.safe) { setDemoRunning(false); return; }
@@ -651,7 +651,7 @@ function HeroArtwork() {
 function World({ name, reaction, light }: { name: string; reaction: string; light: number }) {
   return (
     <div className="world" style={{ "--light": light } as React.CSSProperties}>
-      <div className="world-stars">✦　·　✦　·_✦</div>
+      <div className="world-stars">{"✦\u3000·\u3000✦\u3000·_✦"}</div>
       <div className="world-moon" />
       <div className="world-hill hill-back" />
       <div className="world-hill hill-front" />
