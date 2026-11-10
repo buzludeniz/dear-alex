@@ -397,10 +397,11 @@ async def run_chrome_normal_flow(frontend_url: str, headless: bool = False) -> b
             await page.wait_for_timeout(700)
 
             await page.locator("text=Open a letter from past you").click()
-            await page.wait_for_timeout(1000)
+            # The resurfaced letter opens the Letter view; the app does nothing if no letter came back.
+            await page.get_by_role("heading", name="Dear you,").wait_for(timeout=8000)
+            await page.locator(".letter-opening", has_text="You went through this:").wait_for(timeout=3000)
+            assert await page.locator(".letter .advice").count() > 0, "Resurfaced letter shows no advice"
             success("Scored past letter resurfaced successfully.")
-
-            await page.wait_for_timeout(1200)
 
     return True
 
