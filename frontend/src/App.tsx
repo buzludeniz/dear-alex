@@ -19,6 +19,8 @@ import {
 import { API, deviceId, request } from "./lib/api";
 import { useAmbientMusic } from "./lib/useAmbient";
 import { DiagnosticsModal } from "./components/DiagnosticsModal";
+import { AccessibilityPanel } from "./components/AccessibilityPanel";
+import { useAccessibilityPrefs } from "./lib/accessibility";
 
 type Style = "Compassion" | "Perspective" | "Action";
 type Advice = { scene: string; text: string; style: Style };
@@ -72,6 +74,7 @@ export default function App() {
   const cardsRef = useRef<Card[]>([]);
 
   const { playing, toggle } = useAmbientMusic();
+  const a11y = useAccessibilityPrefs();
 
   useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem("dear-alex-theme", theme); }, [theme]);
   useEffect(() => { request<Card[]>("/cards").then(c => { setCards(c); cardsRef.current = c; }).catch(() => undefined); }, []);
@@ -214,6 +217,7 @@ export default function App() {
       <button className="icon-button" onClick={() => setShowDiagnostics(true)} title="Diagnostics & Live Testing">
         <Activity size={16} />
       </button>
+      <AccessibilityPanel prefs={a11y.prefs} update={a11y.update} reset={a11y.reset} />
       <button className="icon-button" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
         {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
       </button>
@@ -247,7 +251,7 @@ export default function App() {
       {screen === "checkin" && <Checkin mood={mood} setMood={setMood} next={() => setScreen("intake")} onDemo={() => void runDemo()} demoRunning={demoRunning} onDiagnostics={() => setShowDiagnostics(true)} onCrisisDemo={triggerCrisisDemo} />}
       {screen === "intake" && <Intake story={story} voice={voice} category={category} name={name} setStory={setStory} setVoice={setVoice} setCategory={setCategory} setName={setName} begin={() => void begin()} reset={reset} loading={loading} />}
       {screen === "scene" && <Scene scene={SCENES[step]} name={name || "Alex"} story={story} voice={voice} cards={cards.filter(c => c.scene === SCENES[step].key)} custom={custom} setCustom={setCustom} submit={submitAdvice} reaction={reaction} light={light} step={step} loading={loading} onExit={reset} />}
-      {screen === "reveal" && <Reveal story={story} name={name || "Alex"} tokens={revealTokens} done={() => setScreen("letter")} />}
+      {screen === "reveal" && <Reveal story={story} name={name || "Alex"} tokens={revealTokens} reduceMotion={a11y.effective.reduceMotion} done={() => setScreen("letter")} />}
       {screen === "letter" && letter && <LetterView letter={letter} onVault={() => void openVault()} onReset={reset} />}
       {screen === "vault" && <Vault letters={vault} collection={collection} open={item => { setLetter(item); setScreen("letter"); }} past={() => void pastLetter()} erase={() => void erase()} />}
 
@@ -338,17 +342,18 @@ function Scene({ scene, name, story, voice, cards, custom, setCustom, submit, re
   );
 }
 
-function Reveal({ story, name, tokens, done }: { story: string; name: string; tokens: Token[]; done: () => void }) {
+function Reveal({ story, name, tokens, done, reduceMotion }: { story: string; name: string; tokens: Token[]; done: () => void; reduceMotion: boolean }) {
   const [phase, setPhase] = useState<"alex" | "you">("alex");
   const [revealed, setRevealed] = useState(0);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
       setPhase("you");
-      tokens.forEach((_, i) => window.setTimeout(() => setRevealed(i + 1), i * 85));
+      if (reduceMotion) setRevealed(tokens.length || 9999);
+      else tokens.forEach((_, i) => window.setTimeout(() => setRevealed(i + 1), i * 85));
     }, 1800);
     return () => window.clearTimeout(t);
-  }, [tokens]);
+  }, [tokens, reduceMotion]);
 
   function skipAnim() { setPhase("you"); setRevealed(tokens.length || 9999); }
 
